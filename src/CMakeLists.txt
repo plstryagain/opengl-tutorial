@@ -10,5 +10,5 @@ elseif (LINUX)
     # add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
     #     COMMAND ${CMAKE_SOURCE_DIR}/shaders/compile_linux.sh
     # )
-    target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -l:libGLEW.a glfw GL)
 endif ()

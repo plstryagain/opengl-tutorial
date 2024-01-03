@@ -1,3 +1,4 @@
+#include <string>
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -5,6 +6,48 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <fstream>
+#include <filesystem>
+#include <sstream>
+
+struct ShaderProgramSource
+{
+    std::string vertex_source;
+    std::string fragment_source;
+};
+
+static ShaderProgramSource parse_shader(const std::filesystem::path& file_path)
+{
+    std::ifstream stream{file_path};
+    if (!stream.is_open()) {
+        std::cout << "File not open!" << std::endl;
+        return {};
+    }
+
+    enum class ShaderType
+    {
+        NONE = -1, VERTEX = 0, FRAGMENT = 1
+    };
+
+    std::string line;
+    std::stringstream ss[2];
+    ShaderType type = ShaderType::NONE;
+    while (std::getline(stream, line)) {
+        if (line.find("#shader") != std::string::npos) {
+            if (line.find("vertex") != std::string::npos) {
+                type = ShaderType::VERTEX;
+            } else if (line.find("fragment") != std::string::npos) {
+                type = ShaderType::FRAGMENT;
+            }
+        } else {
+            ss[static_cast<int>(type)] << line << '\n';
+        }
+    }
+    return { 
+        ss[static_cast<int>(ShaderType::VERTEX)].str(), 
+        ss[static_cast<int>(ShaderType::FRAGMENT)].str() 
+    };
+}
 
 static uint32_t compile_shader(uint32_t type, std::string_view source)
 {
@@ -87,25 +130,9 @@ int main(void)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
     // glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    std::string vertex_shader = 
-        "#version 330 core\n"
-        "layout(location = 0) in vec4 position;"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = position;\n"
-        "}\n";
-
-    std::string fragment_shader = 
-        "#version 330 core\n"
-        "layout(location = 0) out vec4 color;"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "   color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";        
-    uint32_t shader = create_shader(vertex_shader, fragment_shader);
+    auto source = parse_shader("res/shaders/basic.shader");
+      
+    uint32_t shader = create_shader(source.vertex_source, source.fragment_source);
     glUseProgram(shader);
 
     /* Loop until the user closes the window */

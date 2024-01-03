@@ -10,11 +10,38 @@
 #include <filesystem>
 #include <sstream>
 
+#ifdef _MSC_VER
+#define ASSERT(x) if (!(x)) __debugbreak();
+#else
+#define ASSERT(x) if (!(x)) __builtin_trap();
+#endif
+
+#define GLCall(x) gl_clear_error();\
+    x;\
+    ASSERT(gl_log_call(#x, __FILE__, __LINE__))
+
 struct ShaderProgramSource
 {
     std::string vertex_source;
     std::string fragment_source;
 };
+
+static void gl_clear_error()
+{
+    while (glGetError() != GL_NO_ERROR){
+
+    }
+}
+
+static bool gl_log_call(std::string_view function, std::string_view file, int32_t line)
+{
+    while (GLenum error = glGetError()) {
+        std::cout << "[OpenGL error] (" << error << "): " << function <<
+        " " << file << " " << line << std::endl;
+        return false;
+    }
+    return true;
+}
 
 static ShaderProgramSource parse_shader(const std::filesystem::path& file_path)
 {
@@ -152,7 +179,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+        GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

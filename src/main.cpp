@@ -115,19 +115,30 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    std::array<float, 6> positions{
-        -0.5f, -0.5f,
-        0.0f, 0.5f,
-        0.5f, -0.5f
+    std::array<float, 8> positions{
+        -0.5f, -0.5f, // 0
+        0.5f, -0.5f,  // 1
+        0.5f, 0.5f,   // 2
+        -0.5f, 0.5f,  // 3 
+    };
+
+    std::array<uint32_t, 6> indices = {
+        0, 1, 2, 
+        2, 3, 0
     };
     
-    unsigned int buffer = 0;
+    uint32_t buffer = 0;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+    uint32_t ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
 
     // glBindBuffer(GL_ARRAY_BUFFER, 0);
     auto source = parse_shader("res/shaders/basic.shader");
@@ -141,7 +152,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, positions.size() / 2);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

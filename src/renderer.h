@@ -5,6 +5,10 @@
 
 #include <string>
 
+#include "vertex_array.h"
+#include "index_buffer.h"
+#include "shader.h"
+
 #ifdef _MSC_VER
 #define ASSERT(x) if (!(x)) __debugbreak();
 #else
@@ -19,3 +23,10 @@
 void gl_clear_error();
 
 bool gl_log_call(std::string_view function, std::string_view file, int32_t line);
+
+class Renderer
+{
+public:
+    void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+    void Clear() const;
+};

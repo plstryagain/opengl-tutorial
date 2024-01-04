@@ -28,12 +28,18 @@ void Shader::Unbind() const
     glUseProgram(0);
 }
 
-void Shader::SetUnifrom1f(std::string_view name, float v)
+void Shader::SetUniform1i(std::string_view name, int32_t v)
+{
+    glUniform1i(GetUniformLocation(name), v);
+}
+
+
+void Shader::SetUniform1f(std::string_view name, float v)
 {
     glUniform1f(GetUniformLocation(name), v);
 }
 
-void Shader::SetUnifrom4f(std::string_view name, float v0, float v1, float v2, float v3)
+void Shader::SetUniform4f(std::string_view name, float v0, float v1, float v2, float v3)
 {
     glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }

@@ -16,4 +16,25 @@ elseif (LINUX)
 
 endif (WIN32)
 
+include_directories(vendor)
+add_subdirectory(vendor/stb_image)
 add_subdirectory(src)
+
+add_executable(
+    ${PROJECT_NAME}
+    $<TARGET_OBJECTS:main_obj>
+    $<TARGET_OBJECTS:stb_image_obj>
+)
+
+if (WIN32)
+    # add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+    #     COMMAND ${CMAKE_SOURCE_DIR}/shaders/compile_win.bat
+    # )
+    target_link_directories(${PROJECT_NAME} PUBLIC "$ENV{GLFW_ROOT}/lib-vc2022" "$ENV{GLEW_ROOT}/lib/Release/x64")
+    target_link_libraries(${PROJECT_NAME} PUBLIC glfw3.lib -lopengl32 glew32s.lib)
+elseif (LINUX)
+    # add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+    #     COMMAND ${CMAKE_SOURCE_DIR}/shaders/compile_linux.sh
+    # )
+    target_link_libraries(${PROJECT_NAME} PUBLIC -l:libGLEW.a glfw GL)
+endif ()

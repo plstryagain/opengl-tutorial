@@ -18,8 +18,9 @@ public:
     void Bind() const;
     void Unbind() const;
 
-    void SetUnifrom1f(std::string_view name, float v);
-    void SetUnifrom4f(std::string_view name, float v0, float v1, float v2, float v3);
+    void SetUniform1i(std::string_view name, int32_t v);
+    void SetUniform1f(std::string_view name, float v);
+    void SetUniform4f(std::string_view name, float v0, float v1, float v2, float v3);
 
 private:
     int32_t GetUniformLocation(std::string_view name);

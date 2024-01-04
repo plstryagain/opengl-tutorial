@@ -3,6 +3,7 @@
 #include "index_buffer.h"
 #include "vertex_array.h"
 #include "shader.h"
+#include "texture.h"
 
 #include <string>
 
@@ -46,11 +47,11 @@ int main(void)
     std::cout << glGetString(GL_VERSION) << std::endl;
 
     {
-        std::array<float, 8> positions{
-            -0.5f, -0.5f, // 0
-            0.5f, -0.5f,  // 1
-            0.5f, 0.5f,   // 2
-            -0.5f, 0.5f,  // 3 
+        std::array<float, 16> positions{
+            -0.5f, -0.5f, 0.0f, 0.0f, // 0
+            0.5f, -0.5f, 1.0f, 0.0f, // 1
+            0.5f, 0.5f, 1.0f, 1.0f,  // 2
+            -0.5f, 0.5f,  0.0f, 1.0f// 3 
         };
 
         std::array<uint32_t, 6> indices = {
@@ -63,11 +64,16 @@ int main(void)
         VertexBuffer vb{positions.data(), positions.size() * sizeof(float)};
         VertexBufferLayout layout{};
         layout.Push<float>(2);
+        layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
         IndexBuffer ib{indices.data(), indices.size()};
         Shader shader{"res/shaders/basic.shader"};
         shader.Bind();
+
+        Texture texture{"res/textures/grass.png"};
+        texture.Bind(0);
+        shader.SetUniform1i("u_Texture", 0);
 
         va.Unbind();
         vb.Unbind();
@@ -85,7 +91,7 @@ int main(void)
             renderer.Clear();
 
             shader.Bind();
-            shader.SetUnifrom4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+            shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
             renderer.Draw(va, ib, shader);
 

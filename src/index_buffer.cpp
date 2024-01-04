@@ -1,5 +1,6 @@
 #include "index_buffer.h"
 #include "renderer.h"
+#include "gl_error.h"
 
 IndexBuffer::IndexBuffer(const uint32_t* data, uint32_t count)
     : count_(count)

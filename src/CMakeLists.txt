@@ -1,4 +1,4 @@
-add_executable(${PROJECT_NAME} main.cpp renderer.cpp vertex_buffer.cpp index_buffer.cpp vertex_array.cpp)
+add_executable(${PROJECT_NAME} main.cpp renderer.cpp vertex_buffer.cpp index_buffer.cpp vertex_array.cpp shader.cpp)
 
 if (WIN32)
     # add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD

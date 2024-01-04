@@ -1,6 +1,7 @@
 #include "renderer.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
+#include "vertex_array.h"
 
 #include <string>
 
@@ -141,14 +142,12 @@ int main(void)
             2, 3, 0
         };
 
-        uint32_t vao = 0;
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
 
+        VertexArray va{};
         VertexBuffer vb{positions.data(), positions.size() * sizeof(float)};
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+        VertexBufferLayout layout{};
+        layout.Push<float>(2);
+        va.AddBuffer(vb, layout);
 
         IndexBuffer ib{indices.data(), indices.size()};
 
@@ -177,7 +176,7 @@ int main(void)
             glUseProgram(shader);
             glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
 
-            glBindVertexArray(vao);
+            va.Bind();
             ib.Bind();
 
             GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr));

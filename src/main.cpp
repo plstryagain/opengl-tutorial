@@ -125,6 +125,11 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     if (!window)
@@ -155,6 +160,10 @@ int main(void)
         0, 1, 2, 
         2, 3, 0
     };
+
+    uint32_t vao = 0;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
     
     uint32_t buffer = 0;
     glGenBuffers(1, &buffer);
@@ -177,6 +186,11 @@ int main(void)
 
     int32_t location = glGetUniformLocation(shader, "u_Color");
     ASSERT(location != -1)
+
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     
     float r = 0.0f;
     float inc = 0.05f;
@@ -185,7 +199,13 @@ int main(void)
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shader);
         glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
+
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
         GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr));
 
         if (r > 1.0f) {

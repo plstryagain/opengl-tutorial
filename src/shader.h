@@ -1,7 +1,10 @@
 #pragma once
 
+#include "glm/fwd.hpp"
 #include <filesystem>
 #include <unordered_map>
+
+#include <glm/glm.hpp>
 
 struct ShaderProgramSource
 {
@@ -21,7 +24,8 @@ public:
     void SetUniform1i(std::string_view name, int32_t v);
     void SetUniform1f(std::string_view name, float v);
     void SetUniform4f(std::string_view name, float v0, float v1, float v2, float v3);
-
+    void SetUniformMat4f(std::string_view name, const  glm::mat4& matrix);
+    
 private:
     int32_t GetUniformLocation(std::string_view name);
     uint32_t CreateShader(std::string_view vertex_shader, std::string_view fragment_shader);

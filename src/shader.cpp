@@ -44,6 +44,11 @@ void Shader::SetUniform4f(std::string_view name, float v0, float v1, float v2, f
     glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }
 
+void Shader::SetUniformMat4f(std::string_view name, const  glm::mat4& matrix)
+{
+    glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
+}
+
 int32_t Shader::GetUniformLocation(std::string_view name)
 {
     if (uniform_location_cache_.find(name) != uniform_location_cache_.end()) {

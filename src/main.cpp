@@ -1,12 +1,14 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "renderer.h"
+#include "tests/test.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "vertex_array.h"
 #include "shader.h"
 #include "texture.h"
 #include "tests/test_clear_color.h"
+#include "tests/test_menu.h"
 
 #include <string>
 
@@ -77,23 +79,34 @@ int main(void)
         const char* glsl_version = "#version 330";
         ImGui_ImplOpenGL3_Init(glsl_version);
         
-        test::CLearColor clear_color_test;
+        test::Test* current_test = nullptr;
+        test::TestMenu* test_menu = new test::TestMenu(current_test);
+        current_test = test_menu;
+
+        test_menu->RegisterTest<test::ClearColor>("Clear color");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
             /* Render here */
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             renderer.Clear();
-
-            clear_color_test.OnUpdate(0.0f);
-            clear_color_test.OnRender();
 
             // Start the Dear ImGui frame
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
-
-            clear_color_test.OnImGuiRender();
+            if (current_test) {
+                current_test->OnUpdate(0.0f);
+                current_test->OnRender();
+                ImGui::Begin("Test");
+                if (current_test != test_menu && ImGui::Button("<-")) {
+                    delete current_test;
+                    current_test = test_menu;
+                }
+                current_test->OnImGuiRender();
+                ImGui::End();
+            }
 
             // Rendering
             ImGui::Render();

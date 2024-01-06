@@ -18,12 +18,14 @@ endif (WIN32)
 
 include_directories(vendor)
 add_subdirectory(vendor/stb_image)
+add_subdirectory(vendor/imgui)
 add_subdirectory(src)
 
 add_executable(
     ${PROJECT_NAME}
     $<TARGET_OBJECTS:main_obj>
     $<TARGET_OBJECTS:stb_image_obj>
+    $<TARGET_OBJECTS:imgui_obj>
 )
 
 if (WIN32)

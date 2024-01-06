@@ -17,15 +17,18 @@ elseif (LINUX)
 endif (WIN32)
 
 include_directories(vendor)
+include_directories(src)
 add_subdirectory(vendor/stb_image)
 add_subdirectory(vendor/imgui)
 add_subdirectory(src)
+add_subdirectory(src/tests)
 
 add_executable(
     ${PROJECT_NAME}
     $<TARGET_OBJECTS:main_obj>
     $<TARGET_OBJECTS:stb_image_obj>
     $<TARGET_OBJECTS:imgui_obj>
+    $<TARGET_OBJECTS:tests_obj>
 )
 
 if (WIN32)

@@ -9,6 +9,7 @@
 #include "texture.h"
 #include "tests/test_clear_color.h"
 #include "tests/test_menu.h"
+#include "tests/test_texture_2d.h"
 
 #include <string>
 
@@ -66,9 +67,6 @@ int main(void)
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
@@ -84,6 +82,7 @@ int main(void)
         current_test = test_menu;
 
         test_menu->RegisterTest<test::ClearColor>("Clear color");
+        test_menu->RegisterTest<test::TestTexture2D>("Texture 2D");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
@@ -118,6 +117,10 @@ int main(void)
             /* Poll for and process events */
             glfwPollEvents();
         }
+        if (current_test != test_menu) {
+            delete test_menu;
+        }
+        delete current_test;
     }
 
     // Cleanup
